@@ -39,10 +39,10 @@ SIDE_EFFECT_PATTERNS = re.compile(
     re.IGNORECASE
 )
 
-import torch
-from transformers import AutoTokenizer
-from transformers import AutoModelForSequenceClassification
-MODEL_DIR = r"C:\Users\MARUTIRAJ\Desktop\drug-side-effect-app\sentiment_roberta"
+# import torch
+# from transformers import AutoTokenizer
+# from transformers import AutoModelForSequenceClassification
+# MODEL_DIR = r"C:\Users\MARUTIRAJ\Desktop\drug-side-effect-app\sentiment_roberta"
 
 @lru_cache(maxsize=1)
 def _load_model():
