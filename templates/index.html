@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Drug Sentiment Analyzer</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">💊</div>
+      <h1>Drug Sentiment Analyzer</h1>
+      <p class="subtitle">Enter a drug name to analyze patient sentiment and discover top side effects</p>
+    </header>
+
+    <div class="search-card">
+      <div class="input-group">
+        <input
+          type="text"
+          id="drugInput"
+          placeholder="e.g. Ibuprofen, Metformin, Lisinopril..."
+          autocomplete="off"
+        />
+        <button id="analyzeBtn" onclick="analyze()">
+          <span id="btnText">Analyze</span>
+          <span id="spinner" class="spinner hidden"></span>
+        </button>
+      </div>
+      <p id="errorMsg" class="error hidden"></p>
+    </div>
+
+    <div id="resultCard" class="result-card hidden">
+      <div class="result-header">
+        <div class="drug-name" id="resDrugName"></div>
+        <div class="sentiment-badge" id="resSentiment"></div>
+      </div>
+      <div class="confidence-row">
+        <span>Confidence</span>
+        <div class="confidence-bar-wrap">
+          <div class="confidence-bar" id="resBar"></div>
+        </div>
+        <span id="resConfidence"></span>
+      </div>
+      <div id="sideEffectsSection" class="side-effects-section hidden">
+        <h3>⚠️ Top Reported Side Effects</h3>
+        <ul id="sideEffectsList"></ul>
+      </div>
+      <p id="notFoundNote" class="note hidden">
+        ℹ️ Drug not found in dataset. Sentiment estimated from model knowledge only.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const input = document.getElementById("drugInput");
+    input.addEventListener("keydown", e => { if (e.key === "Enter") analyze(); });
+
+    async function analyze() {
+      const drug = input.value.trim();
+      if (!drug) return showError("Please enter a drug name.");
+      hideError();
+      setLoading(true);
+      hideResult();
+
+      try {
+        const res  = await fetch("/predict", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ drug_name: drug })
+        });
+        const data = await res.json();
+        if (data.error) return showError(data.error);
+        renderResult(data);
+      } catch (err) {
+        showError("Server error. Is Flask running?");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function renderResult(d) {
+      document.getElementById("resDrugName").textContent = d.drug;
+
+      const badge = document.getElementById("resSentiment");
+      badge.textContent = d.sentiment;
+      badge.className   = "sentiment-badge sentiment-" + d.sentiment.toLowerCase();
+
+      const bar = document.getElementById("resBar");
+      bar.style.width = d.confidence + "%";
+      bar.className   = "confidence-bar bar-" + d.sentiment.toLowerCase();
+      document.getElementById("resConfidence").textContent = d.confidence + "%";
+
+      const sfSection = document.getElementById("sideEffectsSection");
+      const sfList    = document.getElementById("sideEffectsList");
+      sfList.innerHTML = "";
+      if (d.sentiment === "Negative" && d.side_effects && d.side_effects.length) {
+        d.side_effects.forEach(se => {
+          const li = document.createElement("li");
+          li.textContent = se;
+          sfList.appendChild(li);
+        });
+        sfSection.classList.remove("hidden");
+      } else {
+        sfSection.classList.add("hidden");
+      }
+
+      const noteEl = document.getElementById("notFoundNote");
+      d.found_in_data ? noteEl.classList.add("hidden") : noteEl.classList.remove("hidden");
+
+      document.getElementById("resultCard").classList.remove("hidden");
+    }
+
+    function setLoading(on) {
+      document.getElementById("btnText").textContent    = on ? "Analyzing..." : "Analyze";
+      document.getElementById("spinner").classList.toggle("hidden", !on);
+      document.getElementById("analyzeBtn").disabled    = on;
+    }
+    function showError(msg) {
+      const el = document.getElementById("errorMsg");
+      el.textContent = msg;
+      el.classList.remove("hidden");
+    }
+    function hideError()  { document.getElementById("errorMsg").classList.add("hidden"); }
+    function hideResult() { document.getElementById("resultCard").classList.add("hidden"); }
+  </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+# Core Web
+flask>=2.3.0
+
+# Deep Learning
+torch>=2.0.0
+
+# NLP / Transformers
+transformers>=4.35.0
+sentencepiece>=0.1.99
+safetensors>=0.4.0
+datasets>=2.14.0
+
+# Data
+pandas>=2.0.0
+numpy>=1.24.0
+
+# ML Utilities
+scikit-learn>=1.3.0
+
+# Visualization (notebook only)
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Optional: Biomedical NER (enhanced side-effect extraction)
+# scispacy>=0.5.3
+# https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.3/en_ner_bc5cdr_md-0.5.3.tar.gz

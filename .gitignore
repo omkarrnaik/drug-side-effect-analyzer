@@ -1,0 +1,16 @@
+# Model weights
+sentiment_roberta/
+*.safetensors
+*.bin
+
+# Datasets
+*.csv
+data/
+
+# Python
+__pycache__/
+*.pyc
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
