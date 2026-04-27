@@ -47,7 +47,7 @@ SIDE_EFFECT_PATTERNS = re.compile(
 @lru_cache(maxsize=1)
 def _load_model():
     tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR,use_fast=False)
-    model = AutoModelForSequenceClassification.from_pretrained(MODEL_DIR,local_files_only=True)
+    model = AutoModelForSequenceClassification.from_pretrained(MODEL_DIR)
     print(model.config.id2label)
     model.eval()
     device=torch.device(
