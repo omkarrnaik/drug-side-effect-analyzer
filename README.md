@@ -1,3 +1,13 @@
+---
+title: Drug Side Effect App
+emoji: 💊
+colorFrom: blue
+colorTo: green
+sdk: docker
+app_file: app.py
+pinned: false
+---
+
 # 💊 Drug Sentiment Analyzer
 
 > **AI-powered pharmacovigilance tool** — fine-tunes `roberta-base` on 215K+ real patient drug reviews to classify sentiment (Negative / Neutral / Positive) and surface the top reported side effects for any drug, served through a lightweight Flask REST API.
